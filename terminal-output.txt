@@ -1,0 +1,542 @@
+semgrep scan --config auto .                              
+Unable to find image 'semgrep/semgrep:latest' locally
+latest: Pulling from semgrep/semgrep
+9dbdd7529b11: Pulling fs layer 
+501899fa0473: Pulling fs layer 
+b34662260da9: Pulling fs layer 
+9dbdd7529b11: Pull complete 
+1fab3f0a341e: Pull complete 
+5e9b4a97f639: Pull complete 
+1f3704e5c90a: Pull complete 
+21495a98d08f: Pull complete 
+bd9ddc54bea9: Pull complete 
+e27403d7ab04: Pull complete 
+1912aa0a9c6a: Pull complete 
+6d096fb1ac30: Pull complete 
+e6db061c8902: Pull complete 
+3737d556ebfa: Pull complete 
+35de23eebc97: Pull complete 
+d2ace822c3ac: Download complete 
+Digest: sha256:2e45517a85e13a9cca14a2a00df6bb48affd66b8ebfae1b0991cd57578362fb0
+Status: Downloaded newer image for semgrep/semgrep:latest
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 18 files tracked by git with 1074 Code rules:
+                                                                                                                        
+  Language      Rules   Files          Origin      Rules                                                                
+ ─────────────────────────────        ───────────────────                                                               
+  <multilang>      60      18          Community    1074                                                                
+  html              1       6                                                                                           
+  json              4       2                                                                                           
+  python          243       1                                                                                           
+  js              153       1                                                                                           
+  yaml             35       1                                                                                           
+  dockerfile        6       1                                                                                           
+                                                                                                                        
+                   
+                   
+┌─────────────────┐
+│ 7 Code Findings │
+└─────────────────┘
+              
+    Dockerfile
+   ❯❯❱ dockerfile.security.missing-user.missing-user
+          ❰❰ Blocking ❱❱
+          By not specifying a USER, a program in the container may run as 'root'. This is a security hazard.
+          If an attacker can control a process running as root, they may have control over the container.   
+          Ensure that the last USER in a Dockerfile is a USER other than 'root'.                            
+          Details: https://sg.run/Gbvn                                                                      
+                                                                                                            
+           ▶▶┆ Autofix ▶ USER non-root CMD ["python", "app.py"]
+           18┆ CMD ["python", "app.py"]
+          
+    app.py
+   ❯❯❱ python.jwt.security.jwt-hardcode.jwt-python-hardcoded-secret
+          ❰❰ Blocking ❱❱
+          Hardcoded JWT secret or private key is used. This is a Insufficiently Protected Credentials     
+          weakness: https://cwe.mitre.org/data/definitions/522.html Consider using an appropriate security
+          mechanism to protect the credentials (e.g. keeping secrets in environment variables)            
+          Details: https://sg.run/l2E9                                                                    
+                                                                                                          
+           69┆ return jwt.encode(payload, JWT_SECRET, algorithm='HS256')
+   
+   ❯❯❱ python.jwt.security.jwt-none-alg.jwt-python-none-alg
+          ❰❰ Blocking ❱❱
+          Detected use of the 'none' algorithm in a JWT token. The 'none' algorithm assumes the integrity of
+          the token has already been verified. This would allow a malicious actor to forge a JWT token that 
+          will automatically be verified. Do not explicitly use the 'none' algorithm. Instead, use an       
+          algorithm such as 'HS256'.                                                                        
+          Details: https://sg.run/Yvp4                                                                      
+                                                                                                            
+           80┆ return jwt.decode(token, JWT_SECRET, algorithms=['HS256', 'none'])
+   
+    ❯❱ python.lang.security.audit.md5-used-as-password.md5-used-as-password
+          ❰❰ Blocking ❱❱
+          It looks like MD5 is used as a password hash. MD5 is not considered a secure password hash because  
+          it can be cracked by an attacker in a short amount of time. Use a suitable password hashing function
+          such as scrypt. You can use `hashlib.scrypt`.                                                       
+          Details: https://sg.run/5DwD                                                                        
+                                                                                                              
+          222┆ password_hash = hashlib.md5(password.encode()).hexdigest()
+   
+    ❯❱ python.flask.security.audit.app-run-param-config.avoid_app_run_with_bad_host
+          ❰❰ Blocking ❱❱
+          Running flask app with host 0.0.0.0 could expose the server publicly.
+          Details: https://sg.run/eLby                                         
+                                                                               
+          507┆ app.run(debug=True, host='0.0.0.0', port=5000)
+   
+    ❯❱ python.flask.security.audit.debug-enabled.debug-enabled
+          ❰❰ Blocking ❱❱
+          Detected Flask app with debug=True. Do not deploy to production with this flag enabled as it will   
+          leak sensitive information. Instead, consider using Flask configuration variables or setting 'debug'
+          using system environment variables.                                                                 
+          Details: https://sg.run/dKrd                                                                        
+                                                                                                              
+          507┆ app.run(debug=True, host='0.0.0.0', port=5000)
+                        
+    templates/login.html
+    ❯❱ python.django.security.django-no-csrf-token.django-no-csrf-token
+          ❰❰ Blocking ❱❱
+          Manually-created forms in django templates should specify a csrf_token to prevent CSRF attacks.
+          Details: https://sg.run/N0Bp                                                                   
+                                                                                                         
+            5┆ <form method="POST" action="{{ url_for('login') }}">
+            6┆   <div class="form-group">
+            7┆     <label>USERNAME</label>
+            8┆     <input type="text" name="username" autocomplete="off">
+            9┆   </div>
+           10┆   <div class="form-group">
+           11┆     <label>PASSWORD</label>
+           12┆     <input type="password" name="password">
+           13┆   </div>
+           14┆   <div class="btn-row">
+             [hid 3 additional lines, adjust with --max-lines-per-finding] 
+
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 7 (7 blocking)
+ • Rules run: 498
+ • Targets scanned: 18
+ • Parsed lines: ~100.0%
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 498 rules on 18 files: 7 findings.
+
+
+
+trufflehog git file://. --no-update
+Unable to find image 'trufflesecurity/trufflehog:latest' locally
+latest: Pulling from trufflesecurity/trufflehog
+4f4fb700ef54: Pull complete 
+42fbb32bff63: Pull complete 
+d9452faad7ec: Pull complete 
+7b229517ed22: Pull complete 
+49c16260ac47: Pull complete 
+Digest: sha256:674b2f187620a19df77f44cf9a7d77efcc581a5662accef2f2739cbb46ba4a3a
+Status: Downloaded newer image for trufflesecurity/trufflehog:latest
+🐷🔑🐷  TruffleHog. Unearth your secrets. 🐷🔑🐷
+
+2026-11-06T03:16:39Z    info-0  trufflehog      running source  {"source_name": "trufflehog - git", "source_type": "SOURCE_TYPE_GIT", "source_id": 1, "job_id": 1, "source_manager_worker_id": "hqta9", "with_units": true}
+Found unverified result 🐷🔑❓
+Verification issue: lookup sync.warez.local on 192.168.65.7:53: no such host
+Detector Type: Postgres
+Decoder Type: PLAIN
+Raw result: postgresql://warez_sync:xf0rc3-4p1-t0k3n-1984@sync.warez.local:5432
+Sslmode: <unset>
+Host: sync.warez.local:5432
+Username: warez_sync
+Database: warezdb
+Commit: 796b7dde322f8345b9150bdacb7c01223cfa943b
+Email: Sysop <sysop@warez.local>
+File: sync.py
+Line: 1
+Repository: file:///pwd
+Repository_local_path: /tmp/trufflehog-21-1737572066
+Timestamp: 2026-11-06 02:56:13 +0000
+
+Found unverified result 🐷🔑❓
+Verification issue: lookup db on 192.168.65.7:53: no such host
+Detector Type: Postgres
+Decoder Type: PLAIN
+Raw result: postgresql://warez:warez123@db:5432
+Host: db:5432
+Username: warez
+Database: warezdb
+Sslmode: <unset>
+Commit: 8312844cf01606fe80b8d7edaa7403b140aaf358
+Email: Sysop <sysop@warez.local>
+File: app.py
+Line: 115
+Repository: file:///pwd
+Timestamp: 2026-11-06 02:56:13 +0000
+
+Found unverified result 🐷🔑❓
+Verification issue: lookup db on 192.168.65.7:53: no such host
+Detector Type: Postgres
+Decoder Type: PLAIN
+Raw result: postgresql://warez:warez123@db:5432
+Sslmode: <unset>
+Host: db:5432
+Username: warez
+Database: warezdb
+Commit: 8312844cf01606fe80b8d7edaa7403b140aaf358
+Email: Sysop <sysop@warez.local>
+File: docker-compose.yml
+Line: 7
+Repository: file:///pwd
+Repository_local_path: /tmp/trufflehog-21-1737572066
+Timestamp: 2026-11-06 02:56:13 +0000
+
+2026-11-06T03:16:43Z    info-0  trufflehog      finished scanning       {"chunks": 22, "bytes": 39547, "verified_secrets": 0, "unverified_secrets": 3, "scan_duration": "4.761630942s", "trufflehog_version": "3.99.8", "verification_caching": {"Hits":0,"Misses":3,"HitsWasted":0,"AttemptsSaved":0,"VerificationTimeSpentMS":8055}}
+
+
+
+
+pip-audit -r requirements.txt
+Unable to find image 'python:3.10-slim' locally
+3.10-slim: Pulling from library/python
+1189ef607cc6: Pull complete 
+cc1cbe171e30: Pull complete 
+79f4247a2db5: Pull complete 
+ecc510c1e359: Pull complete 
+554fcc2a04fd: Download complete 
+866633192887: Download complete 
+Digest: sha256:6ff506466f8b1e981719b468cc0023b8ef000b983cdec0eafe119d01f379e31d
+Status: Downloaded newer image for python:3.10-slim
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+
+[notice] A new release of pip is available: 23.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+Found 136 known vulnerabilities in 5 packages
+Name         Version ID                  Fix Versions
+------------ ------- ------------------- ------------
+flask        2.0.1   PYSEC-2023-62       2.2.5,2.3.2
+flask        2.0.1   PYSEC-2023-62       2.2.5,2.3.2
+flask        2.0.1   PYSEC-2026-2151     3.1.3
+flask        2.0.1   PYSEC-2026-2151     3.1.3
+werkzeug     2.0.3   PYSEC-2022-203      2.1.1
+werkzeug     2.0.3   PYSEC-2023-57       2.2.3
+werkzeug     2.0.3   PYSEC-2023-58       2.2.3
+werkzeug     2.0.3   PYSEC-2023-58       2.2.3
+werkzeug     2.0.3   PYSEC-2023-57       2.2.3
+werkzeug     2.0.3   PYSEC-2023-221      2.3.8,3.0.1
+werkzeug     2.0.3   PYSEC-2023-221      2.3.8,3.0.1
+werkzeug     2.0.3   PYSEC-2026-2043     3.0.3
+werkzeug     2.0.3   PYSEC-2026-2045     3.0.6
+werkzeug     2.0.3   PYSEC-2026-1860     3.0.6
+werkzeug     2.0.3   PYSEC-2026-2046     3.1.4
+werkzeug     2.0.3   PYSEC-2026-2044     3.1.5
+werkzeug     2.0.3   PYSEC-2026-2320     3.1.6
+werkzeug     2.0.3   PYSEC-2026-2046     3.1.4
+werkzeug     2.0.3   PYSEC-2026-2045     3.0.6
+werkzeug     2.0.3   PYSEC-2026-2044     3.1.5
+werkzeug     2.0.3   PYSEC-2026-2043     3.0.3
+werkzeug     2.0.3   PYSEC-2026-2320     3.1.6
+werkzeug     2.0.3   PYSEC-2026-3417     3.0.6
+werkzeug     2.0.3   PYSEC-2026-4312     3.1.9
+pillow       9.2.0   PYSEC-2022-42980    9.3.0
+pillow       9.2.0   PYSEC-2022-42980    9.3.0
+pillow       9.2.0   PYSEC-2026-457      10.2.0
+pillow       9.2.0   PYSEC-2023-175      10.0.1
+pillow       9.2.0   PYSEC-2026-1794     10.0.1
+pillow       9.2.0   PYSEC-2023-227      10.0.0
+pillow       9.2.0   PYSEC-2023-227      10.0.0
+pillow       9.2.0   PYSEC-2026-1793     10.3.0
+pillow       9.2.0   PYSEC-2026-165      12.2.0
+pillow       9.2.0   PYSEC-2026-2874     12.2.0
+pillow       9.2.0   PYSEC-2026-165      12.2.0
+pillow       9.2.0   PYSEC-2026-457      10.2.0
+pillow       9.2.0   PYSEC-2026-1793     10.3.0
+pillow       9.2.0   PYSEC-2026-1794     10.0.1
+pillow       9.2.0   PYSEC-2026-2253     12.3.0
+pillow       9.2.0   PYSEC-2026-2255     12.3.0
+pillow       9.2.0   PYSEC-2026-2257     12.3.0
+pillow       9.2.0   PYSEC-2026-2256     12.3.0
+pillow       9.2.0   PYSEC-2026-2254     12.3.0
+pillow       9.2.0   PYSEC-2026-2874     12.2.0
+pillow       9.2.0   PYSEC-2026-3453     12.3.0
+pillow       9.2.0   PYSEC-2026-3451     12.3.0
+pillow       9.2.0   PYSEC-2026-3493     12.3.0
+pillow       9.2.0   PYSEC-2026-2254     12.3.0
+pillow       9.2.0   PYSEC-2026-2253     12.3.0
+pillow       9.2.0   PYSEC-2026-2256     12.3.0
+pillow       9.2.0   PYSEC-2026-2255     12.3.0
+pillow       9.2.0   PYSEC-2026-3454     12.3.0
+pillow       9.2.0   PYSEC-2026-3451     12.3.0
+pillow       9.2.0   PYSEC-2026-3494     12.3.0
+pillow       9.2.0   PYSEC-2026-3495     12.3.0
+pillow       9.2.0   PYSEC-2026-3496     12.3.0
+pillow       9.2.0   PYSEC-2026-3453     12.3.0
+pillow       9.2.0   PYSEC-2026-3454     12.3.0
+pillow       9.2.0   PYSEC-2026-3495     12.3.0
+pillow       9.2.0   PYSEC-2026-3496     12.3.0
+pillow       9.2.0   PYSEC-2026-3494     12.3.0
+pillow       9.2.0   PYSEC-2026-3493     12.3.0
+pillow       9.2.0   PYSEC-2026-4327     13.0.0
+pillow       9.2.0   PYSEC-2026-4326     13.0.0
+pillow       9.2.0   PYSEC-2026-4340     13.0.0
+pillow       9.2.0   PYSEC-2026-4343     13.0.0
+pillow       9.2.0   PYSEC-2026-4334     13.0.0
+pillow       9.2.0   PYSEC-2026-4337     13.0.0
+pillow       9.2.0   PYSEC-2026-4341     13.0.0
+pillow       9.2.0   PYSEC-2026-4330     13.0.0
+pillow       9.2.0   PYSEC-2026-4338     13.0.0
+pillow       9.2.0   PYSEC-2026-4335     13.0.0
+pillow       9.2.0   PYSEC-2026-4331     13.0.0
+pillow       9.2.0   PYSEC-2026-4332     13.0.0
+pillow       9.2.0   PYSEC-2026-4329     13.0.0
+pillow       9.2.0   OSV-2022-715
+pillow       9.2.0   OSV-2022-1074
+pillow       9.2.0   CVE-2026-112895     13.0.0
+pillow       9.2.0   CVE-2026-112400     13.0.0
+pillow       9.2.0   CVE-2026-112897     13.0.0
+pillow       9.2.0   CVE-2026-112395     13.0.0
+pillow       9.2.0   CVE-2026-112404     13.0.0
+pillow       9.2.0   CVE-2026-112899     13.0.0
+pillow       9.2.0   CVE-2026-112900     13.0.0
+pillow       9.2.0   CVE-2026-112891     13.0.0
+pillow       9.2.0   CVE-2026-112390     13.0.0
+pillow       9.2.0   CVE-2026-112401     13.0.0
+pillow       9.2.0   CVE-2026-112391     13.0.0
+pillow       9.2.0   CVE-2026-112894     13.0.0
+pillow       9.2.0   CVE-2026-112406     13.0.0
+pillow       9.2.0   CVE-2026-112399     13.0.0
+pillow       9.2.0   CVE-2026-112892     13.0.0
+pillow       9.2.0   CVE-2026-112393     13.0.0
+pillow       9.2.0   CVE-2026-96638      13.0.0
+pillow       9.2.0   CVE-2026-96640      13.0.0
+pyjwt        2.3.0   PYSEC-2022-202      2.4.0
+pyjwt        2.3.0   PYSEC-2022-202      2.4.0
+pyjwt        2.3.0   PYSEC-2026-120      2.12.0
+pyjwt        2.3.0   PYSEC-2026-120      2.12.0
+pyjwt        2.3.0   PYSEC-2025-183
+pyjwt        2.3.0   PYSEC-2026-179      2.13.0
+pyjwt        2.3.0   PYSEC-2026-175      2.13.0
+pyjwt        2.3.0   PYSEC-2026-177      2.13.0
+pyjwt        2.3.0   PYSEC-2026-177      2.13.0
+pyjwt        2.3.0   PYSEC-2026-179      2.13.0
+pyjwt        2.3.0   PYSEC-2026-4145     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4144     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4148     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4140     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4141     2.15.0
+pyjwt        2.3.0   PYSEC-2026-4147     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4183     2.15.0
+pyjwt        2.3.0   GHSA-pxh4-856f-4h89 2.14.0
+cryptography 38.0.4  PYSEC-2023-11       39.0.1
+cryptography 38.0.4  PYSEC-2026-800      39.0.1
+cryptography 38.0.4  PYSEC-2026-1283     42.0.0
+cryptography 38.0.4  PYSEC-2023-254      41.0.6
+cryptography 38.0.4  PYSEC-2026-1285     42.0.2
+cryptography 38.0.4  PYSEC-2023-254      41.0.6
+cryptography 38.0.4  PYSEC-2024-225      42.0.4
+cryptography 38.0.4  PYSEC-2024-225      42.0.4
+cryptography 38.0.4  PYSEC-2026-2141     46.0.5
+cryptography 38.0.4  PYSEC-2023-11       39.0.1
+cryptography 38.0.4  PYSEC-2026-35       46.0.6
+cryptography 38.0.4  PYSEC-2026-35       46.0.6
+cryptography 38.0.4  PYSEC-2026-800      39.0.1
+cryptography 38.0.4  PYSEC-2026-1283     42.0.0
+cryptography 38.0.4  PYSEC-2026-1285     42.0.2
+cryptography 38.0.4  PYSEC-2026-2141     46.0.5
+cryptography 38.0.4  PYSEC-2026-3553     49.0.0
+cryptography 38.0.4  PYSEC-2026-3554     49.0.0
+cryptography 38.0.4  GHSA-5cpq-8wj7-hf2v 41.0.0
+cryptography 38.0.4  GHSA-jm77-qphf-c4w8 41.0.3
+cryptography 38.0.4  GHSA-v8gr-m533-ghj9 41.0.4
+cryptography 38.0.4  GHSA-h4gh-qq45-vh27 43.0.1
+cryptography 38.0.4  GHSA-537c-gmf6-5ccf 48.0.1
+
+What's next:
+    Debug this container error with Gordon → docker ai "help me fix this container error"
+
+
+
+
+
+ npm audit  
+Unable to find image 'node:20-slim' locally
+20-slim: Pulling from library/node
+3c02fd806613: Pull complete 
+e54aec64c365: Pull complete 
+ff86ea2e5edc: Pull complete 
+804d4d68057c: Pull complete 
+64cfb949317c: Pull complete 
+c25f5f744a13: Download complete 
+31633b71bda5: Download complete 
+Digest: sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+Status: Downloaded newer image for node:20-slim
+# npm audit report
+
+lodash  <=4.17.23
+Severity: high
+Command Injection in lodash - https://github.com/advisories/GHSA-35jh-r3h4-6jhm
+Regular Expression Denial of Service (ReDoS) in lodash - https://github.com/advisories/GHSA-29mw-wpgm-hmr9
+lodash vulnerable to Code Injection via `_.template` imports key names - https://github.com/advisories/GHSA-r5fr-rjxr-66jc
+Lodash has Prototype Pollution Vulnerability in `_.unset`, `_.omit`, and `_.pullAt` functions - https://github.com/advisories/GHSA-xxjr-mmjv-4gpg
+fix available via `npm audit fix --force`
+Will install lodash@4.18.1, which is outside the stated dependency range
+node_modules/lodash
+
+1 high severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+What's next:
+    Debug this container error with Gordon → docker ai "help me fix this container error"
+
+
+
+
+zap-baseline.py -t http://host.docker.internal:5000
+Unable to find image 'ghcr.io/zaproxy/zaproxy:stable' locally
+stable: Pulling from zaproxy/zaproxy
+cd5f7553f81c: Pulling fs layer 
+c212a4ce8543: Pulling fs layer 
+1b1d49a38a01: Pulling fs layer 
+beff637b166d: Pulling fs layer 
+68fc7dda2d84: Pulling fs layer 
+d76c7e4d4eed: Pulling fs layer 
+4f4fb700ef54: Pulling fs layer 
+c212a4ce8543: Pull complete 
+6173fb42a391: Pull complete 
+dee331ead96d: Pull complete 
+41737c9a08d0: Pull complete 
+af3152b6af93: Pull complete 
+41b28138a536: Pull complete 
+3c5439d0ae62: Pull complete 
+f63a8bdddb02: Pull complete 
+5ea75c5c7143: Pull complete 
+39623f43dfaa: Pull complete 
+7829b3d60f05: Pull complete 
+e5ca1437e0c7: Pull complete 
+f26fc71eb93e: Pull complete 
+Digest: sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af
+Status: Downloaded newer image for ghcr.io/zaproxy/zaproxy:stable
+Using the Automation Framework
+Total of 11 URLs
+PASS: Vulnerable JS Library (Powered by Retire.js) [10003]
+PASS: In Page Banner Information Leak [10009]
+PASS: Cookie No HttpOnly Flag [10010]
+PASS: Cookie Without Secure Flag [10011]
+PASS: Re-examine Cache-control Directives [10015]
+PASS: Cross-Domain JavaScript Source File Inclusion [10017]
+PASS: Content-Type Header Missing [10019]
+PASS: Information Disclosure - Debug Error Messages [10023]
+PASS: Information Disclosure - Sensitive Information in URL [10024]
+PASS: Information Disclosure - Sensitive Information in HTTP Referrer Header [10025]
+PASS: HTTP Parameter Override [10026]
+PASS: Information Disclosure - Suspicious Comments [10027]
+PASS: Off-site Redirect [10028]
+PASS: Cookie Poisoning [10029]
+PASS: User Controllable Charset [10030]
+PASS: Viewstate [10032]
+PASS: Directory Browsing [10033]
+PASS: Heartbleed OpenSSL Vulnerability (Indicative) [10034]
+PASS: Strict-Transport-Security Header [10035]
+PASS: Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s) [10037]
+PASS: X-Backend-Server Header Information Leak [10039]
+PASS: Secure Pages Include Mixed Content [10040]
+PASS: HTTP to HTTPS Insecure Transition in Form Post [10041]
+PASS: HTTPS to HTTP Insecure Transition in Form Post [10042]
+PASS: User Controllable JavaScript Event (XSS) [10043]
+PASS: Big Redirect Detected (Potential Sensitive Information Leak) [10044]
+PASS: Retrieved from Cache [10050]
+PASS: X-ChromeLogger-Data (XCOLD) Header Information Leak [10052]
+PASS: Cookie without SameSite Attribute [10054]
+PASS: CSP [10055]
+PASS: X-Debug-Token Information Leak [10056]
+PASS: Username Hash Found [10057]
+PASS: X-AspNet-Version Response Header [10061]
+PASS: PII Disclosure [10062]
+PASS: Timestamp Disclosure [10096]
+PASS: Hash Disclosure [10097]
+PASS: Cross-Domain Misconfiguration [10098]
+PASS: Source Code Disclosure [10099]
+PASS: Weak Authentication Method [10105]
+PASS: Reverse Tabnabbing [10108]
+PASS: Modern Web Application [10109]
+PASS: Dangerous JS Functions [10110]
+PASS: Session Management Response Identified [10112]
+PASS: Verification Request Identified [10113]
+PASS: Script Served From Malicious Domain (polyfill) [10115]
+PASS: ZAP is Out of Date [10116]
+PASS: Private IP Disclosure [2]
+PASS: Server Side Technology Version with Known Vulnerabilities [20020]
+PASS: Session ID in URL Rewrite [3]
+PASS: Script Passive Scan Rules [50001]
+PASS: Stats Passive Scan Rule [50003]
+PASS: Insecure JSF ViewState [90001]
+PASS: Java Serialization Object [90002]
+PASS: Sub Resource Integrity Attribute Missing [90003]
+PASS: Charset Mismatch [90011]
+PASS: Application Error Disclosure [90022]
+PASS: WSDL File Detection [90030]
+PASS: Loosely Scoped Cookie [90033]
+WARN-NEW: Missing Anti-clickjacking Header [10020] x 5 
+        http://host.docker.internal:5000 (200 OK)
+        http://host.docker.internal:5000/ (200 OK)
+        http://host.docker.internal:5000/groups (200 OK)
+        http://host.docker.internal:5000/login (200 OK)
+        http://host.docker.internal:5000/releases (200 OK)
+WARN-NEW: X-Content-Type-Options Header Missing [10021] x 5 
+        http://host.docker.internal:5000 (200 OK)
+        http://host.docker.internal:5000/ (200 OK)
+        http://host.docker.internal:5000/groups (200 OK)
+        http://host.docker.internal:5000/releases (200 OK)
+        http://host.docker.internal:5000/static/css/style.css (200 OK)
+WARN-NEW: User Controllable HTML Element Attribute (Potential XSS) [10031] x 2 
+        http://host.docker.internal:5000/releases?platform=DOS&search=ZAP (200 OK)
+        http://host.docker.internal:5000/releases?platform=DOS&search=ZAP (200 OK)
+WARN-NEW: Server Leaks Version Information via "Server" HTTP Response Header Field [10036] x 5 
+        http://host.docker.internal:5000 (200 OK)
+        http://host.docker.internal:5000/groups (200 OK)
+        http://host.docker.internal:5000/releases (200 OK)
+        http://host.docker.internal:5000/robots.txt (404 Not Found)
+        http://host.docker.internal:5000/sitemap.xml (404 Not Found)
+WARN-NEW: Content Security Policy (CSP) Header Not Set [10038] x 4 
+        http://host.docker.internal:5000 (200 OK)
+        http://host.docker.internal:5000/groups (200 OK)
+        http://host.docker.internal:5000/releases (200 OK)
+        http://host.docker.internal:5000/robots.txt (404 Not Found)
+WARN-NEW: Storable and Cacheable Content [10049] x 6 
+        http://host.docker.internal:5000/ (200 OK)
+        http://host.docker.internal:5000/groups (200 OK)
+        http://host.docker.internal:5000/releases (200 OK)
+        http://host.docker.internal:5000/robots.txt (404 Not Found)
+        http://host.docker.internal:5000/sitemap.xml (404 Not Found)
+WARN-NEW: Permissions Policy Header Not Set [10063] x 5 
+        http://host.docker.internal:5000/ (200 OK)
+        http://host.docker.internal:5000/groups (200 OK)
+        http://host.docker.internal:5000/releases (200 OK)
+        http://host.docker.internal:5000/robots.txt (404 Not Found)
+        http://host.docker.internal:5000/sitemap.xml (404 Not Found)
+WARN-NEW: Authentication Request Identified [10111] x 1 
+        http://host.docker.internal:5000/login (200 OK)
+WARN-NEW: Absence of Anti-CSRF Tokens [10202] x 2 
+        http://host.docker.internal:5000/login (200 OK)
+        http://host.docker.internal:5000/login (200 OK)
+WARN-NEW: Cross-Origin-Embedder-Policy Header Missing or Invalid [90004] x 13 
+        http://host.docker.internal:5000 (200 OK)
+        http://host.docker.internal:5000/ (200 OK)
+        http://host.docker.internal:5000/groups (200 OK)
+        http://host.docker.internal:5000/releases (200 OK)
+        http://host.docker.internal:5000 (200 OK)
+FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 10    WARN-INPROG: 0  INFO: 0 IGNORE: 0       PASS: 58
+
+What's next:
+    Debug this container error with Gordon → docker ai "help me fix this container error"
