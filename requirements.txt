@@ -1,0 +1,6 @@
+flask==2.0.1
+werkzeug==2.0.3
+psycopg[binary]
+Pillow==9.2.0
+PyJWT==2.3.0
+cryptography==38.0.4

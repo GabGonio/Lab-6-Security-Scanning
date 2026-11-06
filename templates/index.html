@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="panel">
+  <div class="panel-title">WHAT IS THE WAREZ SCENE</div>
+  <p style="color:var(--grey);font-size:13px;line-height:1.7;border-left:2px solid var(--green-dim);padding-left:14px;">
+    The warez scene emerged in the early 1980s as personal computers became
+    common and software publishers began adding copy protection to their products.
+    Release groups competed to crack these protections and distribute software
+    freely. Groups had names, internal hierarchies, and credited their members
+    on each release. Crackers broke the protection. Couriers distributed the
+    files across BBS networks overnight. This tracker documents releases logged
+    by active crews.
+  </p>
+</div>
+
+<div class="stat-row">
+  <div class="stat-box">
+    <div class="stat-num">{{ release_count }}</div>
+    <div class="stat-label">RELEASES</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num">{{ crew_count }}</div>
+    <div class="stat-label">CREW</div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">RECENT RELEASES</div>
+  {% if recent %}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>TITLE</th>
+          <th>PLATFORM</th>
+          <th>CREW</th>
+          <th>YEAR</th>
+          <th>NOTES</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in recent %}
+        <tr>
+          <td class="title">{{ r.title }}</td>
+          <td class="meta">{{ r.platform }}</td>
+          <td class="crew">{{ r.cracked_by }}</td>
+          <td class="meta">{{ r.release_year }}</td>
+          <td class="notes">{{ r.notes }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color:var(--grey);">NO RELEASES LOGGED YET.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

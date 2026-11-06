@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="panel">
+  <div class="panel-title">KNOWN CREW</div>
+  {% if groups %}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>NAME</th>
+          <th>HANDLE</th>
+          <th>REGION</th>
+          <th>ACTIVE SINCE</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in groups %}
+        <tr>
+          <td class="title">{{ g.name }}</td>
+          <td class="crew">{{ g.handle }}</td>
+          <td class="meta">{{ g.region }}</td>
+          <td class="meta">{{ g.active_since }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p style="color:var(--grey);">NO CREW REGISTERED.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

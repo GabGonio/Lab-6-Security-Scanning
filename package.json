@@ -1,0 +1,8 @@
+{
+  "name": "warez-tracker",
+  "version": "1.0.0",
+  "description": "Warez Release Tracker frontend utilities",
+  "dependencies": {
+    "lodash": "4.17.20"
+  }
+}

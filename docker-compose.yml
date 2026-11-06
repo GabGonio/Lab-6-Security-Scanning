@@ -1,0 +1,23 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://warez:warez123@db:5432/warezdb
+    depends_on:
+      - db
+    restart: on-failure
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=warezdb
+      - POSTGRES_USER=warez
+      - POSTGRES_PASSWORD=warez123
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:

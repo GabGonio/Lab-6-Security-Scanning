@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="panel">
+  <div class="panel-title">RELEASE DATABASE</div>
+
+  <form method="GET" action="{{ url_for('releases') }}">
+    <div class="search-row">
+      <div class="form-group">
+        <label>SEARCH TITLE</label>
+        <input type="text" name="search" value="{{ search }}" autocomplete="off" placeholder="enter title keyword...">
+      </div>
+      <div class="form-group">
+        <label>PLATFORM</label>
+        <select name="platform">
+          <option value="">ALL</option>
+          <option value="DOS"   {% if platform == 'DOS'   %}selected{% endif %}>DOS</option>
+          <option value="Amiga" {% if platform == 'Amiga' %}selected{% endif %}>AMIGA</option>
+          <option value="C64"   {% if platform == 'C64'   %}selected{% endif %}>C64</option>
+          <option value="Atari" {% if platform == 'Atari' %}selected{% endif %}>ATARI</option>
+        </select>
+      </div>
+      <div>
+        <button type="submit" class="btn">SEARCH</button>
+      </div>
+    </div>
+  </form>
+
+  {% if db_error %}
+    <div style="background:rgba(255,60,60,0.05);border:1px solid var(--red);color:var(--red);font-size:13px;padding:12px;margin-bottom:12px;white-space:pre-wrap;">DB ERROR: {{ db_error }}</div>
+  {% endif %}
+
+  {% if results is not none %}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>TITLE</th>
+          <th>PLATFORM</th>
+          <th>FORMAT</th>
+          <th>CREW</th>
+          <th>YEAR</th>
+          <th>NOTES</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+        <tr>
+          <td class="title">{{ r.title }}</td>
+          <td class="meta">{{ r.platform }}</td>
+          <td class="meta">{{ r.format }}</td>
+          <td class="crew">{{ r.cracked_by }}</td>
+          <td class="meta">{{ r.release_year }}</td>
+          <td class="notes">{{ r.notes }}</td>
+        </tr>
+        {% endfor %}
+        {% if results | length == 0 %}
+        <tr><td colspan="6" style="color:var(--grey);padding-top:12px;">NO RESULTS FOUND.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  {% endif %}
+
+</div>
+
+{% endblock %}

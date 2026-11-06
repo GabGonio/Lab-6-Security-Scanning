@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="panel">
+  <div class="panel-title">LOG A RELEASE</div>
+  <form method="POST" action="{{ url_for('submit') }}" enctype="multipart/form-data">
+    <div class="form-group">
+      <label>TITLE</label>
+      <input type="text" name="title" autocomplete="off" placeholder="game or app title">
+    </div>
+    <div class="form-group">
+      <label>PLATFORM</label>
+      <select name="platform">
+        <option value="DOS">DOS</option>
+        <option value="Amiga">AMIGA</option>
+        <option value="C64">C64</option>
+        <option value="Atari">ATARI</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>FORMAT</label>
+      <select name="format">
+        <option value="floppy">FLOPPY</option>
+        <option value="cd">CD-ROM</option>
+        <option value="tape">TAPE</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>CRACKED BY</label>
+      <input type="text" name="cracked_by" autocomplete="off" placeholder="crew handle">
+    </div>
+    <div class="form-group">
+      <label>YEAR</label>
+      <input type="text" name="release_year" autocomplete="off" placeholder="e.g. 1991">
+    </div>
+    <div class="form-group">
+      <label>NOTES</label>
+      <textarea name="notes" rows="3" placeholder="protection method, disk count, etc."></textarea>
+    </div>
+    <div class="form-group">
+      <label>CRACK SCREEN (optional)</label>
+      <input type="file" name="crack_screen" accept="image/*" style="color:var(--text);background:var(--bg);border:1px solid var(--green-dim);padding:6px;">
+    </div>
+    <div class="btn-row">
+      <button type="submit" class="btn">LOG RELEASE</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

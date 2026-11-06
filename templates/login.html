@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+  <div class="panel-title">CREW LOGIN</div>
+  <form method="POST" action="{{ url_for('login') }}">
+    <div class="form-group">
+      <label>USERNAME</label>
+      <input type="text" name="username" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>PASSWORD</label>
+      <input type="password" name="password">
+    </div>
+    <div class="btn-row">
+      <button type="submit" class="btn">ACCESS SYSTEM</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
