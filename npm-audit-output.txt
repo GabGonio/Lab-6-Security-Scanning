@@ -1,0 +1,36 @@
+ npm audit  
+Unable to find image 'node:20-slim' locally
+20-slim: Pulling from library/node
+3c02fd806613: Pull complete 
+e54aec64c365: Pull complete 
+ff86ea2e5edc: Pull complete 
+804d4d68057c: Pull complete 
+64cfb949317c: Pull complete 
+c25f5f744a13: Download complete 
+31633b71bda5: Download complete 
+Digest: sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+Status: Downloaded newer image for node:20-slim
+# npm audit report
+
+lodash  <=4.17.23
+Severity: high
+Command Injection in lodash - https://github.com/advisories/GHSA-35jh-r3h4-6jhm
+Regular Expression Denial of Service (ReDoS) in lodash - https://github.com/advisories/GHSA-29mw-wpgm-hmr9
+lodash vulnerable to Code Injection via `_.template` imports key names - https://github.com/advisories/GHSA-r5fr-rjxr-66jc
+Lodash has Prototype Pollution Vulnerability in `_.unset`, `_.omit`, and `_.pullAt` functions - https://github.com/advisories/GHSA-xxjr-mmjv-4gpg
+fix available via `npm audit fix --force`
+Will install lodash@4.18.1, which is outside the stated dependency range
+node_modules/lodash
+
+1 high severity vulnerability
+
+To address all issues, run:
+  npm audit fix --force
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+What's next:
+    Debug this container error with Gordon → docker ai "help me fix this container error"

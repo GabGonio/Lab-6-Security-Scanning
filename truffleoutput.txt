@@ -1,0 +1,64 @@
+trufflehog git file://. --no-update
+Unable to find image 'trufflesecurity/trufflehog:latest' locally
+latest: Pulling from trufflesecurity/trufflehog
+4f4fb700ef54: Pull complete 
+42fbb32bff63: Pull complete 
+d9452faad7ec: Pull complete 
+7b229517ed22: Pull complete 
+49c16260ac47: Pull complete 
+Digest: sha256:674b2f187620a19df77f44cf9a7d77efcc581a5662accef2f2739cbb46ba4a3a
+Status: Downloaded newer image for trufflesecurity/trufflehog:latest
+🐷🔑🐷  TruffleHog. Unearth your secrets. 🐷🔑🐷
+
+2026-11-06T03:16:39Z    info-0  trufflehog      running source  {"source_name": "trufflehog - git", "source_type": "SOURCE_TYPE_GIT", "source_id": 1, "job_id": 1, "source_manager_worker_id": "hqta9", "with_units": true}
+Found unverified result 🐷🔑❓
+Verification issue: lookup sync.warez.local on 192.168.65.7:53: no such host
+Detector Type: Postgres
+Decoder Type: PLAIN
+Raw result: postgresql://warez_sync:xf0rc3-4p1-t0k3n-1984@sync.warez.local:5432
+Sslmode: <unset>
+Host: sync.warez.local:5432
+Username: warez_sync
+Database: warezdb
+Commit: 796b7dde322f8345b9150bdacb7c01223cfa943b
+Email: Sysop <sysop@warez.local>
+File: sync.py
+Line: 1
+Repository: file:///pwd
+Repository_local_path: /tmp/trufflehog-21-1737572066
+Timestamp: 2026-11-06 02:56:13 +0000
+
+Found unverified result 🐷🔑❓
+Verification issue: lookup db on 192.168.65.7:53: no such host
+Detector Type: Postgres
+Decoder Type: PLAIN
+Raw result: postgresql://warez:warez123@db:5432
+Host: db:5432
+Username: warez
+Database: warezdb
+Sslmode: <unset>
+Commit: 8312844cf01606fe80b8d7edaa7403b140aaf358
+Email: Sysop <sysop@warez.local>
+File: app.py
+Line: 115
+Repository: file:///pwd
+Timestamp: 2026-11-06 02:56:13 +0000
+
+Found unverified result 🐷🔑❓
+Verification issue: lookup db on 192.168.65.7:53: no such host
+Detector Type: Postgres
+Decoder Type: PLAIN
+Raw result: postgresql://warez:warez123@db:5432
+Sslmode: <unset>
+Host: db:5432
+Username: warez
+Database: warezdb
+Commit: 8312844cf01606fe80b8d7edaa7403b140aaf358
+Email: Sysop <sysop@warez.local>
+File: docker-compose.yml
+Line: 7
+Repository: file:///pwd
+Repository_local_path: /tmp/trufflehog-21-1737572066
+Timestamp: 2026-11-06 02:56:13 +0000
+
+2026-11-06T03:16:43Z    info-0  trufflehog      finished scanning       {"chunks": 22, "bytes": 39547, "verified_secrets": 0, "unverified_secrets": 3, "scan_duration": "4.761630942s", "trufflehog_version": "3.99.8", "verification_caching": {"Hits":0,"Misses":3,"HitsWasted":0,"AttemptsSaved":0,"VerificationTimeSpentMS":8055}}

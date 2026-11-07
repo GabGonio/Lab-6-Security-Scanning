@@ -1,0 +1,157 @@
+pip-audit -r requirements.txt
+Unable to find image 'python:3.10-slim' locally
+3.10-slim: Pulling from library/python
+1189ef607cc6: Pull complete 
+cc1cbe171e30: Pull complete 
+79f4247a2db5: Pull complete 
+ecc510c1e359: Pull complete 
+554fcc2a04fd: Download complete 
+866633192887: Download complete 
+Digest: sha256:6ff506466f8b1e981719b468cc0023b8ef000b983cdec0eafe119d01f379e31d
+Status: Downloaded newer image for python:3.10-slim
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+
+[notice] A new release of pip is available: 23.0.1 -> 26.3
+[notice] To update, run: pip install --upgrade pip
+Found 136 known vulnerabilities in 5 packages
+Name         Version ID                  Fix Versions
+------------ ------- ------------------- ------------
+flask        2.0.1   PYSEC-2023-62       2.2.5,2.3.2
+flask        2.0.1   PYSEC-2023-62       2.2.5,2.3.2
+flask        2.0.1   PYSEC-2026-2151     3.1.3
+flask        2.0.1   PYSEC-2026-2151     3.1.3
+werkzeug     2.0.3   PYSEC-2022-203      2.1.1
+werkzeug     2.0.3   PYSEC-2023-57       2.2.3
+werkzeug     2.0.3   PYSEC-2023-58       2.2.3
+werkzeug     2.0.3   PYSEC-2023-58       2.2.3
+werkzeug     2.0.3   PYSEC-2023-57       2.2.3
+werkzeug     2.0.3   PYSEC-2023-221      2.3.8,3.0.1
+werkzeug     2.0.3   PYSEC-2023-221      2.3.8,3.0.1
+werkzeug     2.0.3   PYSEC-2026-2043     3.0.3
+werkzeug     2.0.3   PYSEC-2026-2045     3.0.6
+werkzeug     2.0.3   PYSEC-2026-1860     3.0.6
+werkzeug     2.0.3   PYSEC-2026-2046     3.1.4
+werkzeug     2.0.3   PYSEC-2026-2044     3.1.5
+werkzeug     2.0.3   PYSEC-2026-2320     3.1.6
+werkzeug     2.0.3   PYSEC-2026-2046     3.1.4
+werkzeug     2.0.3   PYSEC-2026-2045     3.0.6
+werkzeug     2.0.3   PYSEC-2026-2044     3.1.5
+werkzeug     2.0.3   PYSEC-2026-2043     3.0.3
+werkzeug     2.0.3   PYSEC-2026-2320     3.1.6
+werkzeug     2.0.3   PYSEC-2026-3417     3.0.6
+werkzeug     2.0.3   PYSEC-2026-4312     3.1.9
+pillow       9.2.0   PYSEC-2022-42980    9.3.0
+pillow       9.2.0   PYSEC-2022-42980    9.3.0
+pillow       9.2.0   PYSEC-2026-457      10.2.0
+pillow       9.2.0   PYSEC-2023-175      10.0.1
+pillow       9.2.0   PYSEC-2026-1794     10.0.1
+pillow       9.2.0   PYSEC-2023-227      10.0.0
+pillow       9.2.0   PYSEC-2023-227      10.0.0
+pillow       9.2.0   PYSEC-2026-1793     10.3.0
+pillow       9.2.0   PYSEC-2026-165      12.2.0
+pillow       9.2.0   PYSEC-2026-2874     12.2.0
+pillow       9.2.0   PYSEC-2026-165      12.2.0
+pillow       9.2.0   PYSEC-2026-457      10.2.0
+pillow       9.2.0   PYSEC-2026-1793     10.3.0
+pillow       9.2.0   PYSEC-2026-1794     10.0.1
+pillow       9.2.0   PYSEC-2026-2253     12.3.0
+pillow       9.2.0   PYSEC-2026-2255     12.3.0
+pillow       9.2.0   PYSEC-2026-2257     12.3.0
+pillow       9.2.0   PYSEC-2026-2256     12.3.0
+pillow       9.2.0   PYSEC-2026-2254     12.3.0
+pillow       9.2.0   PYSEC-2026-2874     12.2.0
+pillow       9.2.0   PYSEC-2026-3453     12.3.0
+pillow       9.2.0   PYSEC-2026-3451     12.3.0
+pillow       9.2.0   PYSEC-2026-3493     12.3.0
+pillow       9.2.0   PYSEC-2026-2254     12.3.0
+pillow       9.2.0   PYSEC-2026-2253     12.3.0
+pillow       9.2.0   PYSEC-2026-2256     12.3.0
+pillow       9.2.0   PYSEC-2026-2255     12.3.0
+pillow       9.2.0   PYSEC-2026-3454     12.3.0
+pillow       9.2.0   PYSEC-2026-3451     12.3.0
+pillow       9.2.0   PYSEC-2026-3494     12.3.0
+pillow       9.2.0   PYSEC-2026-3495     12.3.0
+pillow       9.2.0   PYSEC-2026-3496     12.3.0
+pillow       9.2.0   PYSEC-2026-3453     12.3.0
+pillow       9.2.0   PYSEC-2026-3454     12.3.0
+pillow       9.2.0   PYSEC-2026-3495     12.3.0
+pillow       9.2.0   PYSEC-2026-3496     12.3.0
+pillow       9.2.0   PYSEC-2026-3494     12.3.0
+pillow       9.2.0   PYSEC-2026-3493     12.3.0
+pillow       9.2.0   PYSEC-2026-4327     13.0.0
+pillow       9.2.0   PYSEC-2026-4326     13.0.0
+pillow       9.2.0   PYSEC-2026-4340     13.0.0
+pillow       9.2.0   PYSEC-2026-4343     13.0.0
+pillow       9.2.0   PYSEC-2026-4334     13.0.0
+pillow       9.2.0   PYSEC-2026-4337     13.0.0
+pillow       9.2.0   PYSEC-2026-4341     13.0.0
+pillow       9.2.0   PYSEC-2026-4330     13.0.0
+pillow       9.2.0   PYSEC-2026-4338     13.0.0
+pillow       9.2.0   PYSEC-2026-4335     13.0.0
+pillow       9.2.0   PYSEC-2026-4331     13.0.0
+pillow       9.2.0   PYSEC-2026-4332     13.0.0
+pillow       9.2.0   PYSEC-2026-4329     13.0.0
+pillow       9.2.0   OSV-2022-715
+pillow       9.2.0   OSV-2022-1074
+pillow       9.2.0   CVE-2026-112895     13.0.0
+pillow       9.2.0   CVE-2026-112400     13.0.0
+pillow       9.2.0   CVE-2026-112897     13.0.0
+pillow       9.2.0   CVE-2026-112395     13.0.0
+pillow       9.2.0   CVE-2026-112404     13.0.0
+pillow       9.2.0   CVE-2026-112899     13.0.0
+pillow       9.2.0   CVE-2026-112900     13.0.0
+pillow       9.2.0   CVE-2026-112891     13.0.0
+pillow       9.2.0   CVE-2026-112390     13.0.0
+pillow       9.2.0   CVE-2026-112401     13.0.0
+pillow       9.2.0   CVE-2026-112391     13.0.0
+pillow       9.2.0   CVE-2026-112894     13.0.0
+pillow       9.2.0   CVE-2026-112406     13.0.0
+pillow       9.2.0   CVE-2026-112399     13.0.0
+pillow       9.2.0   CVE-2026-112892     13.0.0
+pillow       9.2.0   CVE-2026-112393     13.0.0
+pillow       9.2.0   CVE-2026-96638      13.0.0
+pillow       9.2.0   CVE-2026-96640      13.0.0
+pyjwt        2.3.0   PYSEC-2022-202      2.4.0
+pyjwt        2.3.0   PYSEC-2022-202      2.4.0
+pyjwt        2.3.0   PYSEC-2026-120      2.12.0
+pyjwt        2.3.0   PYSEC-2026-120      2.12.0
+pyjwt        2.3.0   PYSEC-2025-183
+pyjwt        2.3.0   PYSEC-2026-179      2.13.0
+pyjwt        2.3.0   PYSEC-2026-175      2.13.0
+pyjwt        2.3.0   PYSEC-2026-177      2.13.0
+pyjwt        2.3.0   PYSEC-2026-177      2.13.0
+pyjwt        2.3.0   PYSEC-2026-179      2.13.0
+pyjwt        2.3.0   PYSEC-2026-4145     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4144     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4148     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4140     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4141     2.15.0
+pyjwt        2.3.0   PYSEC-2026-4147     2.14.0
+pyjwt        2.3.0   PYSEC-2026-4183     2.15.0
+pyjwt        2.3.0   GHSA-pxh4-856f-4h89 2.14.0
+cryptography 38.0.4  PYSEC-2023-11       39.0.1
+cryptography 38.0.4  PYSEC-2026-800      39.0.1
+cryptography 38.0.4  PYSEC-2026-1283     42.0.0
+cryptography 38.0.4  PYSEC-2023-254      41.0.6
+cryptography 38.0.4  PYSEC-2026-1285     42.0.2
+cryptography 38.0.4  PYSEC-2023-254      41.0.6
+cryptography 38.0.4  PYSEC-2024-225      42.0.4
+cryptography 38.0.4  PYSEC-2024-225      42.0.4
+cryptography 38.0.4  PYSEC-2026-2141     46.0.5
+cryptography 38.0.4  PYSEC-2023-11       39.0.1
+cryptography 38.0.4  PYSEC-2026-35       46.0.6
+cryptography 38.0.4  PYSEC-2026-35       46.0.6
+cryptography 38.0.4  PYSEC-2026-800      39.0.1
+cryptography 38.0.4  PYSEC-2026-1283     42.0.0
+cryptography 38.0.4  PYSEC-2026-1285     42.0.2
+cryptography 38.0.4  PYSEC-2026-2141     46.0.5
+cryptography 38.0.4  PYSEC-2026-3553     49.0.0
+cryptography 38.0.4  PYSEC-2026-3554     49.0.0
+cryptography 38.0.4  GHSA-5cpq-8wj7-hf2v 41.0.0
+cryptography 38.0.4  GHSA-jm77-qphf-c4w8 41.0.3
+cryptography 38.0.4  GHSA-v8gr-m533-ghj9 41.0.4
+cryptography 38.0.4  GHSA-h4gh-qq45-vh27 43.0.1
+cryptography 38.0.4  GHSA-537c-gmf6-5ccf 48.0.1
+
+What's next:
+    Debug this container error with Gordon → docker ai "help me fix this container error"

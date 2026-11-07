@@ -1,0 +1,131 @@
+semgrep scan --config auto .                              
+Unable to find image 'semgrep/semgrep:latest' locally
+latest: Pulling from semgrep/semgrep
+9dbdd7529b11: Pulling fs layer 
+501899fa0473: Pulling fs layer 
+b34662260da9: Pulling fs layer 
+9dbdd7529b11: Pull complete 
+1fab3f0a341e: Pull complete 
+5e9b4a97f639: Pull complete 
+1f3704e5c90a: Pull complete 
+21495a98d08f: Pull complete 
+bd9ddc54bea9: Pull complete 
+e27403d7ab04: Pull complete 
+1912aa0a9c6a: Pull complete 
+6d096fb1ac30: Pull complete 
+e6db061c8902: Pull complete 
+3737d556ebfa: Pull complete 
+35de23eebc97: Pull complete 
+d2ace822c3ac: Download complete 
+Digest: sha256:2e45517a85e13a9cca14a2a00df6bb48affd66b8ebfae1b0991cd57578362fb0
+Status: Downloaded newer image for semgrep/semgrep:latest
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 18 files tracked by git with 1074 Code rules:
+                                                                                                                        
+  Language      Rules   Files          Origin      Rules                                                                
+ ─────────────────────────────        ───────────────────                                                               
+  <multilang>      60      18          Community    1074                                                                
+  html              1       6                                                                                           
+  json              4       2                                                                                           
+  python          243       1                                                                                           
+  js              153       1                                                                                           
+  yaml             35       1                                                                                           
+  dockerfile        6       1                                                                                           
+                                                                                                                        
+                   
+                   
+┌─────────────────┐
+│ 7 Code Findings │
+└─────────────────┘
+              
+    Dockerfile
+   ❯❯❱ dockerfile.security.missing-user.missing-user
+          ❰❰ Blocking ❱❱
+          By not specifying a USER, a program in the container may run as 'root'. This is a security hazard.
+          If an attacker can control a process running as root, they may have control over the container.   
+          Ensure that the last USER in a Dockerfile is a USER other than 'root'.                            
+          Details: https://sg.run/Gbvn                                                                      
+                                                                                                            
+           ▶▶┆ Autofix ▶ USER non-root CMD ["python", "app.py"]
+           18┆ CMD ["python", "app.py"]
+          
+    app.py
+   ❯❯❱ python.jwt.security.jwt-hardcode.jwt-python-hardcoded-secret
+          ❰❰ Blocking ❱❱
+          Hardcoded JWT secret or private key is used. This is a Insufficiently Protected Credentials     
+          weakness: https://cwe.mitre.org/data/definitions/522.html Consider using an appropriate security
+          mechanism to protect the credentials (e.g. keeping secrets in environment variables)            
+          Details: https://sg.run/l2E9                                                                    
+                                                                                                          
+           69┆ return jwt.encode(payload, JWT_SECRET, algorithm='HS256')
+   
+   ❯❯❱ python.jwt.security.jwt-none-alg.jwt-python-none-alg
+          ❰❰ Blocking ❱❱
+          Detected use of the 'none' algorithm in a JWT token. The 'none' algorithm assumes the integrity of
+          the token has already been verified. This would allow a malicious actor to forge a JWT token that 
+          will automatically be verified. Do not explicitly use the 'none' algorithm. Instead, use an       
+          algorithm such as 'HS256'.                                                                        
+          Details: https://sg.run/Yvp4                                                                      
+                                                                                                            
+           80┆ return jwt.decode(token, JWT_SECRET, algorithms=['HS256', 'none'])
+   
+    ❯❱ python.lang.security.audit.md5-used-as-password.md5-used-as-password
+          ❰❰ Blocking ❱❱
+          It looks like MD5 is used as a password hash. MD5 is not considered a secure password hash because  
+          it can be cracked by an attacker in a short amount of time. Use a suitable password hashing function
+          such as scrypt. You can use `hashlib.scrypt`.                                                       
+          Details: https://sg.run/5DwD                                                                        
+                                                                                                              
+          222┆ password_hash = hashlib.md5(password.encode()).hexdigest()
+   
+    ❯❱ python.flask.security.audit.app-run-param-config.avoid_app_run_with_bad_host
+          ❰❰ Blocking ❱❱
+          Running flask app with host 0.0.0.0 could expose the server publicly.
+          Details: https://sg.run/eLby                                         
+                                                                               
+          507┆ app.run(debug=True, host='0.0.0.0', port=5000)
+   
+    ❯❱ python.flask.security.audit.debug-enabled.debug-enabled
+          ❰❰ Blocking ❱❱
+          Detected Flask app with debug=True. Do not deploy to production with this flag enabled as it will   
+          leak sensitive information. Instead, consider using Flask configuration variables or setting 'debug'
+          using system environment variables.                                                                 
+          Details: https://sg.run/dKrd                                                                        
+                                                                                                              
+          507┆ app.run(debug=True, host='0.0.0.0', port=5000)
+                        
+    templates/login.html
+    ❯❱ python.django.security.django-no-csrf-token.django-no-csrf-token
+          ❰❰ Blocking ❱❱
+          Manually-created forms in django templates should specify a csrf_token to prevent CSRF attacks.
+          Details: https://sg.run/N0Bp                                                                   
+                                                                                                         
+            5┆ <form method="POST" action="{{ url_for('login') }}">
+            6┆   <div class="form-group">
+            7┆     <label>USERNAME</label>
+            8┆     <input type="text" name="username" autocomplete="off">
+            9┆   </div>
+           10┆   <div class="form-group">
+           11┆     <label>PASSWORD</label>
+           12┆     <input type="password" name="password">
+           13┆   </div>
+           14┆   <div class="btn-row">
+             [hid 3 additional lines, adjust with --max-lines-per-finding] 
+
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 7 (7 blocking)
+ • Rules run: 498
+ • Targets scanned: 18
+ • Parsed lines: ~100.0%
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 498 rules on 18 files: 7 findings.

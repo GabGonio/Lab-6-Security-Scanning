@@ -1,0 +1,208 @@
+I inspected the source code in your Warez Release Tracker.zip. The project contains several deliberately introduced security vulnerabilities, including SQL injection, weak password hashing, exposed secrets, and insecure authentication.
+
+The README.md confirms this is a deliberately vulnerable application for COMP-3021 Lab 4.
+Security vulnerabilities identified
+These findings come from reviewing the source code. I haven't run the application or performed a live penetration test.
+1. SQL Injection
+High severity
+File: app.py — Lines 303–306
+query = "SELECT * FROM releases WHERE title ILIKE %s"if platform:    query = query + " AND platform = '" + platform + "'"
+
+
+
+Vulnerability: The application directly inserts the user-controlled platform parameter into an SQL query.
+
+Impact: An attacker may manipulate the database query to access information that should not be returned, bypass filters, or perform unauthorized database operations.
+
+Recommended fix: Use parameterized SQL queries for the platform value instead of string concatenation.
+2. Hardcoded Secrets and Credentials
+Critical severity
+Files: app.py, docker-compose.yml, init_repo.ps1
+
+Examples in app.py:
+- Line 14: Hardcoded Flask session secret.
+- Line 16: Hardcoded encryption key.
+- Line 21: Hardcoded JWT signing secret.
+- Line 115: Database credentials in the fallback connection URL.
+The Docker configuration also contains a database password. The PowerShell initialization script creates a Git commit containing a credential and then deletes the file, but the credential remains in Git history.
+
+Impact: Anyone who obtains the repository could discover sensitive credentials, potentially forge authentication tokens, or decrypt protected information.
+
+Recommended fix: Store secrets in environment variables or a secret manager, rotate exposed credentials, and remove sensitive credentials from Git history.
+3. Weak Password Hashing (MD5)
+High severity
+File: app.py — Line 222
+password_hash = hashlib.md5(password.encode()).hexdigest()
+
+
+
+Vulnerability: User passwords are hashed using MD5, which is too fast and outdated for secure password storage.
+
+Impact: If password hashes are exposed, attackers can attempt to recover passwords relatively quickly.
+
+Recommended fix: Replace MD5 with Argon2id, bcrypt, or another approved password-hashing algorithm.
+4. Flask Debug Mode Enabled
+Critical severity
+File: app.py — Line 507
+app.run(debug=True, host='0.0.0.0', port=5000)
+
+
+
+Vulnerability: Debug mode is enabled while the application listens on all network interfaces.
+
+Impact: Detailed error information may be exposed. If the debugger is accessible and its protections are bypassed, it could also enable remote code execution.
+
+Recommended fix: Disable debug mode outside local development and use a production WSGI server.
+5. Insecure Session Cookie Configuration
+High severity
+File: app.py — Lines 18–19
+app.config['SESSION_COOKIE_HTTPONLY'] = Falseapp.config['SESSION_COOKIE_SAMESITE'] = None
+
+
+
+Vulnerability: The session cookie is accessible to JavaScript because HttpOnly is disabled. The SameSite setting is also not providing an explicit cross-site protection policy.
+
+Impact: Client-side script vulnerabilities could expose session cookies, increasing the risk of session theft. Cross-site requests may also be easier under certain browser conditions.
+
+Recommended fix: Enable HttpOnly, set Secure=True when using HTTPS, and explicitly configure SameSite='Lax' or 'Strict' as appropriate.
+6. Insecure JWT Authentication
+Severity: High
+
+File: app.py — Lines 61–80
+payload = {'username': username, 'issued': str(datetime.now())}
+
+
+
+Vulnerability: The application creates JWTs without an expiration claim (exp).
+
+The validation function also includes 'none' in its allowed algorithms, although that alone does not prove unsigned tokens can bypass verification.
+
+Impact: A stolen JWT could remain valid indefinitely as long as its signing secret remains unchanged.
+
+Recommended fix: Add an expiration time, restrict verification to HS256, and implement appropriate token revocation or rotation.
+7. Sensitive Token Exposure
+Severity: High
+
+Files: templates/base.html — Lines 27–31; app.py — Lines 498–499
+API TOKEN: <span>{{ session.token }}</span>
+
+
+Vulnerability: The application displays authentication tokens directly on its pages and expects users to supply them through URL query parameters.
+
+Impact: Tokens could be exposed through browser history, logs, copied URLs, or client-side scripts.
+
+Recommended fix: Use the Authorization: Bearer HTTP header and avoid displaying tokens in the page.
+8. Missing Authorization on Private Data
+Severity: High
+
+File: app.py — Lines 371–382, 414–442
+
+Vulnerability: The dashboard, release database, and crew directory do not check whether the user is authenticated.
+
+The /api/releases endpoint requires a JWT, but much of the same information is already available through unprotected web pages.
+
+Impact: Unauthorized visitors can view data that the application describes as private. Release notes are also decrypted before being displayed.
+
+Recommended fix: Require authentication for private pages and verify that each user has permission to access the requested information.
+9. Missing CSRF Protection
+Severity: Medium
+
+Files: templates/login.html, templates/submit.html, app.py
+
+Vulnerability: The login and release submission forms do not contain CSRF tokens or implement equivalent request validation.
+
+Impact: Under vulnerable browser or cookie configurations, an attacker-controlled website could cause a signed-in user's browser to submit unwanted requests.
+
+Recommended fix: Implement CSRF protection for state-changing requests, such as with Flask-WTF's CSRF protection.
+10. Insecure File Upload Handling
+Severity: High
+
+File: app.py — Lines 465–473
+crack_image = Image.open(crack_screen)image_width, image_height = crack_image.sizesafe_name = crack_screen.filename.replace('/', '_')crack_image.save(os.path.join(UPLOAD_FOLDER, safe_name))
+
+
+
+Vulnerability: The upload functionality lacks file-size limits, an explicit allowed-format list, and unique server-generated filenames.
+
+Impact: Malicious or oversized image files could consume excessive server resources. Reusing filenames could also overwrite existing uploaded images.
+
+Recommended fix: Limit upload sizes, verify permitted image formats, generate unique filenames, and apply image-processing resource limits.
+11. Database Error Information Disclosure
+Severity: Medium
+
+Files: app.py — Lines 308–310; templates/releases.html — Line 30
+except Exception as e:    db_error = str(e)
+
+
+
+Vulnerability: Internal database error messages are passed directly to the user-facing page.
+
+Impact: Attackers could learn about SQL queries, database structure, or other internal implementation details.
+
+Recommended fix: Log detailed exceptions privately and show users a generic error message.
+12. Exposed Default Account Passwords
+Severity: High
+
+File: README.md — Lines 45–52
+
+Vulnerability: The documentation contains usernames and their corresponding plaintext passwords, including the administrator account.
+
+Impact: Anyone with access to the documentation can sign in using those credentials if they remain enabled.
+
+Recommended fix: Remove published passwords, replace default credentials with unique passwords, and require password changes during initial setup.
+13. Outdated Dependencies with Known Vulnerabilities
+Severity: High
+
+Files: requirements.txt, package.json
+
+The application contains dependency versions affected by published security advisories.
+Dependency	Version	Known vulnerability
+Lodash	4.17.20	CVE-2021-23337 — command injection risk through template functionality 
+GitHub
+Werkzeug	2.0.3	CVE-2023-25577 — excessive resource consumption during multipart parsing 
+GitHub
+Pillow	9.2.0	CVE-2023-4863 — vulnerable bundled libwebp in affected installations 
+GitHub
+Werkzeug	2.0.3	CVE-2024-34069 — debugger code execution under specific circumstances 
+GitHub
+
+Impact: Vulnerable dependencies can introduce security weaknesses even when the application's own code appears safe. Actual exploitability depends on how each dependency is used.
+
+Recommended fix: Upgrade affected dependencies to maintained, patched versions and rerun dependency audits.
+14. No Login Rate Limiting
+Severity: Medium
+
+File: app.py — Lines 385–404
+
+Vulnerability: The login endpoint does not limit repeated authentication attempts.
+
+Impact: Attackers could attempt many passwords against user accounts without encountering application-level rate restrictions.
+
+Recommended fix: Add authentication rate limiting and monitoring for repeated failed attempts.
+15. Insufficient Input Validation
+Severity: Medium
+
+File: app.py — Lines 475–484
+
+Vulnerability: Submitted release fields are passed to the database without sufficient application-level validation.
+
+For example, release_year is accepted directly from the form, even though the database expects an integer.
+
+Impact: Invalid or excessively large inputs could cause database errors, failed requests, or resource exhaustion.
+
+Recommended fix: Validate required fields, permitted values, lengths, and numeric ranges before database operations.
+
+Summary for your lab
+I identified 15 security findings through source-code review. These have not all been confirmed with security scanners or live testing.
+
+For your COMP-3021 lab, I would prioritize these five findings because they have especially clear evidence in the provided files:
+1. SQL Injection — app.py, lines 303–306
+2. Hardcoded Secrets — app.py, lines 14–21
+3. Weak Password Hashing — app.py, line 222
+4. Flask Debug Mode Enabled — app.py, line 507
+5. Outdated Vulnerable Dependencies — requirements.txt and package.json
+The project also includes instructions for Semgrep, TruffleHog, pip-audit, npm audit, and OWASP ZAP. Those tools can help you confirm and document findings for your assignment.
+
+One important distinction: I did not find an obvious stored XSS vulnerability in the Jinja templates, since the displayed user content uses Jinja's normal escaping. I would not report that as a confirmed vulnerability without additional evidence.
+
+The strongest starting point is the SQL injection vulnerability because you can identify its exact cause, explain its impact, and demonstrate a straightforward parameterized-query fix.
